@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../actions';
 import { connect } from 'react-redux';
 import { Icon } from 'react-native-elements';
+import _ from 'lodash';
 
 class NewNota extends Component {
 
@@ -15,11 +16,15 @@ class NewNota extends Component {
     constructor(props) {
         super(props)
 
+        this.btnSalvar =  _.throttle(this.salvar, 1000, {leading: true, trailing: false})
+        this.btnSalvarEdit = _.throttle(this.salvaEdit, 1000, {leading: true, trailing: false})
+
         this.state = {
             titulo: this.props.nota.titulo,
             texto: this.props.nota.texto,
             save: false
         }
+        
     }
 
     //Salva nota editada e retorna para página Main
@@ -74,7 +79,7 @@ class NewNota extends Component {
                 />
             </View>
             <View style={styles.containerBtn}>
-                <Button style={{ borderRadius: 5, borderColor: '#F4A460' }} bordered iconLeft transparent onPress={() => this.salvar()}>
+                <Button style={{ borderRadius: 5, borderColor: '#F4A460' }} bordered iconLeft transparent onPress={this.btnSalvar}>
                     <Icon name='save' type="AntDesign" color="#F4A460" />
                     <Text style={{ color: '#F4A460' }}>Salvar</Text>
                 </Button>
@@ -105,7 +110,7 @@ class NewNota extends Component {
                 />
             </View>
             <View style={styles.containerBtn}>
-                <Button style={{ borderRadius: 5, borderColor: '#F4A460' }} bordered iconLeft transparent onPress={() => this.salvaEdit()}>
+                <Button style={{ borderRadius: 5, borderColor: '#F4A460' }} bordered iconLeft transparent onPress={this.btnSalvarEdit}>
                     <Icon name='save' type="AntDesign" color="#F4A460" />
                     <Text style={{ color: '#F4A460' }}>Salvar</Text>
                 </Button>

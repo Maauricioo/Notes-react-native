@@ -12,15 +12,13 @@ class QtdNota extends Component {
         };
     }
 
-
-
     render() {
         return (
             <View style={styles.viewAdd}>
                 <Container>
 
                     <Button style={styles.btn} badge onPress={() => Toast.show({
-                        text: 'Esta é sua quantidade de notas',
+                        text: 'Você possui ' + this.props.listaNota.length + ' nota(s)',
                         duration: 2000,
                     })}>
                         <Badge style={{ bottom: 10, left: 15, zIndex: 5 }} >
