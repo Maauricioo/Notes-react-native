@@ -3,6 +3,7 @@
 <p>Aplicação de notas simples desenvolvida em React Native.</p>
 
 ![](src/imgs/Screenshot_1.png)
+
 ![](src/imgs/Screenshot_2.png)
 
 <h3>Instalação</h3>
