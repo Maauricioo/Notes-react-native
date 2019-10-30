@@ -1,52 +1,91 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
-import { bindActionCreators } from 'redux';
-import * as actions from '../actions';
-import { connect } from 'react-redux';
-import { Icon } from 'react-native-elements';
+import React, { Component } from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Animated } from 'react-native'
+import { bindActionCreators } from 'redux'
+import * as actions from '../actions'
+import { connect } from 'react-redux'
+import { Icon } from 'react-native-elements'
+import Swipeable from 'react-native-swipeable'
+import LottieView from 'lottie-react-native'
 
 class ExibeNotas extends Component {
+
+    constructor(props) {
+        super(props)
+        this.moveAnimation = new Animated.ValueXY({ x: 105, y: 600 })
+    }
+
+    state = {
+        animacaoDel: false
+    }
 
     itemEdit = (item) => {
         this.props.editarNota(item);
         this.props.navigation.navigate('NewNota')
     }
 
-    alertDeleta = (item) => {
-        Alert.alert(
-            'Deletar nota',
-            'Deseja realmente deletar esta nota?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                { text: 'OK', onPress: () => this.props.deletarNota(item.id) },
-            ],
-            { cancelable: false },
-        );
+    //Deleta nota
+    Deleta = (item) => {
+        this.props.deletarNota(item.id)
+        this.setState({ animacaoDel: true })
+
+        Animated.spring(this.moveAnimation, {
+            toValue: { x: 105, y: 450 },
+        }).start()
+
+        setTimeout(() => {
+            Animated.spring(this.moveAnimation, {
+                toValue: { x: 105, y: 600 },
+            }).start()
+            setTimeout(() => {
+                this.setState({ animacaoDel: false })
+                this.moveAnimation = new Animated.ValueXY({ x: 105, y: 600 })
+            }, 1100);
+        }, 1100);
     }
 
+    //Swipeable direito
+    rightButtons = [
+        <View style={styles.btnExcluir}>
+            <TouchableOpacity style={styles.btn} onPress={(item) => this.setState({ tal: this.Deleta(item) })} >
+                <Icon
+                    size={35}
+                    color={'#808080'}
+                    name='delete'
+                    type='AntDesign'
+                />
+            </TouchableOpacity>
+        </View>,
+    ]
+
+    //Swipeable esquerdo
+    leftButtons = [
+        <View style={styles.btnEditar}>
+            <TouchableOpacity style={styles.btn} onPress={(item) => this.itemEdit(item)} >
+                <Icon
+                    size={35}
+                    color={'#808080'}
+                    name='edit'
+                    type='AntDesign'
+                />
+            </TouchableOpacity>
+        </View>,
+    ]
+
+    //Notinha
     itemNota = ({ item }) => (
-        <TouchableOpacity onPress={() => this.itemEdit(item)} >
+        <Swipeable
+            rightButtons={this.rightButtons}
+            leftButtons={this.leftButtons}
+            leftButtonWidth={50}
+            rightButtonWidth={50}
+        >
             <View style={styles.notaContainer} >
                 <View style={styles.containerText}>
                     <Text style={styles.notaTitulo}>{item.titulo}</Text>
                     <Text style={styles.notaText}>{item.texto}</Text>
                 </View>
-
-                <View style={styles.containerBtn}>
-                    <TouchableOpacity style={styles.btn} onPress={() => this.alertDeleta(item)} >
-                        <Icon
-                            size={20}
-                            color={'#FF0000'}
-                            name='delete'
-                            type='AntDesign'
-                        />
-                    </TouchableOpacity>
-                </View>
             </View>
-        </TouchableOpacity>
+        </Swipeable>
     )
 
     render() {
@@ -54,9 +93,18 @@ class ExibeNotas extends Component {
             <View style={styles.viewListaNota}>
                 <FlatList
                     data={this.props.listaNota}
-                    keyExtractor={item => item.id.toString()}
+                    keyExtractor={item => String(item.id)}
+                    bounces={false}
                     renderItem={this.itemNota}
+                    ListEmptyComponent={<View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Sua lista está vazia</Text></View>}
                 />
+                {
+                    this.state.animacaoDel &&
+                    <Animated.View style={[styles.viewAnimation, this.moveAnimation.getLayout()]}>
+                        <LottieView style={styles.animacaoDel} resizeMode='cover' source={require('../animations/animationDelete.json')} autoPlay loop={true} />
+                    </Animated.View>
+                }
+
             </View>
         )
     }
@@ -75,12 +123,10 @@ const styles = StyleSheet.create({
     notaContainer: {
         flex: 1,
         backgroundColor: '#FFF',
-        borderWidth: 1,
-        borderColor: '#DDD',
-        borderRadius: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
         padding: 20,
-        marginBottom: 10,
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
 
     containerText: {
@@ -100,25 +146,45 @@ const styles = StyleSheet.create({
         lineHeight: 24
     },
 
-    containerBtn:{
+    containerBtn: {
         flex: 0.2
     },
 
     btn: {
-        height: 35,
+        height: 50,
         borderRadius: 50,
-        borderWidth: 2,
-        borderColor: '#FF0000',
-        backgroundColor: 'transparent',
+        backgroundColor: '#ddd',
         justifyContent: 'center',
-        alignItems: 'center',
-        marginLeft: 5,
-        marginTop: 5,
-        width: 35,
+        width: 50,
     },
 
     viewListaNota: {
         flex: 1,
         padding: 15
     },
+
+    btnExcluir: {
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: '#FFF',
+    },
+    btnEditar: {
+        flex: 1,
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        backgroundColor: '#FFF',
+    },
+    animacaoDel: {
+        height: 150,
+        position: 'absolute',
+    },
+    viewAnimation: {
+        display: 'flex',
+        backgroundColor: (0, 0, 0),
+        position: 'absolute',
+        height: 150,
+        width: 150,
+        alignItems: 'flex-end',
+        zIndex: 1
+    }
 })

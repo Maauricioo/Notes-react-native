@@ -40,4 +40,3 @@ export const salvaNotaEdit = nota => ({
         texto: nota.texto
     }
 })
-

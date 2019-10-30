@@ -14,7 +14,8 @@ export const listaNota = (state = initialState, action) => {
                 listaNotas: [...state.listaNotas, {
                     id: action.payload.id,
                     titulo: action.payload.titulo,
-                    texto: action.payload.texto
+                    texto: action.payload.texto,
+                    delete: true
                 }]
             };
 
@@ -35,10 +36,11 @@ export const listaNota = (state = initialState, action) => {
             item = newState.find((e) => (e.id == action.payload.id));
             index = newState.indexOf(item);
             newState.splice(index, 1, action.payload)
-            return{
+            return {
                 ...state,
                 listaNotas: newState
             }
+
         default:
             return state;
     }
