@@ -18,6 +18,7 @@ class ExibeNotas extends Component {
         animacaoDel: false
     }
 
+    //Edita nota
     itemEdit = (item) => {
         this.props.editarNota(item);
         this.props.navigation.navigate('NewNota')
@@ -46,7 +47,7 @@ class ExibeNotas extends Component {
     //Swipeable direito
     rightButtons = [
         <View style={styles.btnExcluir}>
-            <TouchableOpacity style={styles.btn} onPress={(item) => this.setState({ tal: this.Deleta(item) })} >
+            <TouchableOpacity style={styles.btn} onPress={() => this.Deleta(this.Item)} >
                 <Icon
                     size={35}
                     color={'#808080'}
@@ -60,7 +61,7 @@ class ExibeNotas extends Component {
     //Swipeable esquerdo
     leftButtons = [
         <View style={styles.btnEditar}>
-            <TouchableOpacity style={styles.btn} onPress={(item) => this.itemEdit(item)} >
+            <TouchableOpacity style={styles.btn} onPress={() => this.itemEdit(this.Item)} >
                 <Icon
                     size={35}
                     color={'#808080'}
@@ -71,22 +72,26 @@ class ExibeNotas extends Component {
         </View>,
     ]
 
-    //Notinha
-    itemNota = ({ item }) => (
-        <Swipeable
-            rightButtons={this.rightButtons}
-            leftButtons={this.leftButtons}
-            leftButtonWidth={50}
-            rightButtonWidth={50}
-        >
-            <View style={styles.notaContainer} >
-                <View style={styles.containerText}>
-                    <Text style={styles.notaTitulo}>{item.titulo}</Text>
-                    <Text style={styles.notaText}>{item.texto}</Text>
+    //Notinha   
+    Item
+    itemNota = ({ item }) => {
+        this.Item = item
+        return (
+            <Swipeable
+                rightButtons={this.rightButtons}
+                leftButtons={this.leftButtons}
+                leftButtonWidth={50}
+                rightButtonWidth={50}
+            >
+                <View style={styles.notaContainer} >
+                    <View style={styles.containerText}>
+                        <Text style={styles.notaTitulo}>{item.titulo}</Text>
+                        <Text style={styles.notaText}>{item.texto}</Text>
+                    </View>
                 </View>
-            </View>
-        </Swipeable>
-    )
+            </Swipeable>
+        )
+    }
 
     render() {
         return (
