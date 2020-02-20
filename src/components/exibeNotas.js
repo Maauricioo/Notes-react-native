@@ -101,7 +101,7 @@ class ExibeNotas extends Component {
                     keyExtractor={item => String(item.id)}
                     bounces={false}
                     renderItem={this.itemNota}
-                    ListEmptyComponent={<View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Sua</Text></View>}
+                    ListEmptyComponent={<View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>babababa</Text></View>}
                 />
                 {
                     this.state.animacaoDel &&
